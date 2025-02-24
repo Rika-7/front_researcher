@@ -63,7 +63,7 @@ const news: News[] = [
   },
 ];
 
-export const ProjectDashboard: React.FC = () => {
+export default function ProjectDashboard() {
   return (
     <div className="w-full min-h-screen bg-gray-50">
       <Header />
@@ -92,6 +92,4 @@ export const ProjectDashboard: React.FC = () => {
       </main>
     </div>
   );
-};
-
-export default ProjectDashboard;
+}
