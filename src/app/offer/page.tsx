@@ -7,7 +7,7 @@ import { ClientInfoCard } from "../../components/offer/ClientInfoCard";
 import { ActionButtons } from "../../components/offer/ActionButtons";
 import { BackToHome } from "../../components/offer/BackToHome";
 
-export const ProjectDetailsPage: React.FC = () => {
+export default function ProjectDetailsPage() {
   return (
     <main className="w-full bg-gray-50 min-h-screen max-md:max-w-full">
       <Header />
@@ -35,6 +35,4 @@ export const ProjectDetailsPage: React.FC = () => {
       </div>
     </main>
   );
-};
-
-export default ProjectDetailsPage;
+}
