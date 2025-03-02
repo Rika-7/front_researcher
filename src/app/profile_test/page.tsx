@@ -28,6 +28,31 @@ const ProfileTestPage: React.FC = () => {
     fetchResearchers();
   }, []);
 
+  // Function to format JSON with highlighted keys for better readability
+  const formatJSON = (data: any) => {
+    if (!data) return "";
+
+    const json = JSON.stringify(data, null, 2);
+    // Split by line to process each line individually
+    return json.split("\n").map((line, index) => {
+      // Check if the line contains a key (ends with a colon)
+      if (line.includes('": ')) {
+        const [key, value] = line.split('": ');
+        return (
+          <div key={index} className="flex">
+            <span className="text-blue-700 font-medium">{key}":</span>
+            <span className="text-gray-900 ml-1">{value}</span>
+          </div>
+        );
+      }
+      return (
+        <div key={index} className="text-gray-900">
+          {line}
+        </div>
+      );
+    });
+  };
+
   return (
     <div className="w-full min-h-screen bg-white">
       <Header />
@@ -46,7 +71,7 @@ const ProfileTestPage: React.FC = () => {
 
         {!loading && !error && (
           <div>
-            <p className="text-black font-bold bg-green-100 p-2 rounded-t inline-block">
+            <p className="text-green-700 font-bold bg-green-100 p-2 rounded inline-block">
               ✅ Connection successful!
             </p>
             <p className="text-black font-medium my-2">
@@ -56,12 +81,12 @@ const ProfileTestPage: React.FC = () => {
             {/* Just show the first researcher as a simple test */}
             {researchers.length > 0 && (
               <div className="mt-4 p-3 border border-gray-300 rounded shadow-sm">
-                <h2 className="font-bold text-black">
+                <h2 className="font-bold text-black mb-2">
                   First researcher sample:
                 </h2>
-                <pre className="bg-gray-800 text-black p-3 mt-2 overflow-auto rounded">
-                  {JSON.stringify(researchers[0], null, 2)}
-                </pre>
+                <div className="bg-white border border-gray-300 p-4 mt-2 overflow-auto rounded font-mono text-sm leading-relaxed">
+                  {formatJSON(researchers[0])}
+                </div>
               </div>
             )}
           </div>
