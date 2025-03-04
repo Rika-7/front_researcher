@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Header } from "@/components/common/Header";
 import "./globals.css";
+
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/auth";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,16 +21,26 @@ export const metadata: Metadata = {
   description: "研究者と企業をつなぐプラットフォーム",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Try to get the session safely
+  let userSession;
+  try {
+    userSession = await getServerSession(authOptions);
+  } catch (error) {
+    console.error("Auth error:", error);
+    userSession = null;
+  }
+
   return (
-    <html lang="en">
+    <html lang="ja">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        {userSession?.user && <Header />}
         {children}
       </body>
     </html>
