@@ -1,6 +1,5 @@
 "use client";
 import React from "react";
-import { Header } from "../../components/common/Header";
 import { ProjectCard } from "../../components/home/ProjectCard";
 import { NewsCard } from "../../components/home/NewsCard";
 
@@ -66,7 +65,7 @@ const news: News[] = [
 export default function ProjectDashboard() {
   return (
     <div className="w-full min-h-screen bg-gray-50">
-      <Header />
+      {/* Removed the Header component from here */}
       <main className="px-56 py-10 bg-gray-50 min-h-[calc(100vh_-_68px)] max-md:p-10 max-sm:p-5">
         <h1 className="mb-10 text-5xl font-semibold text-violet-900 max-sm:text-4xl">
           案件一覧
