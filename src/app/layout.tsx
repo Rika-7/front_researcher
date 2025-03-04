@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { Header } from "@/components/common/Header";
 import "./globals.css";
 
 import { getServerSession } from "next-auth";
@@ -27,12 +26,10 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   // Try to get the session safely
-  let userSession;
   try {
-    userSession = await getServerSession(authOptions);
+    await getServerSession(authOptions);
   } catch (error) {
     console.error("Auth error:", error);
-    userSession = null;
   }
 
   return (
@@ -40,7 +37,6 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {userSession?.user && <Header />}
         {children}
       </body>
     </html>
