@@ -1,21 +1,24 @@
 import * as React from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 interface NavigationItem {
   icon: string;
   label: string;
   notificationCount?: number;
+  href: string;
 }
 
 const navigationItems: NavigationItem[] = [
-  { icon: "/icons/clipboard.svg", label: "マイページ" },
+  { icon: "/icons/clipboard.svg", label: "マイページ", href: "/home" },
   {
     icon: "/icons/mail.svg",
     label: "メッセージ",
     notificationCount: 5,
+    href: "/message",
   },
-  { icon: "/icons/user.svg", label: "プロフィール" },
-  { icon: "/icons/search.svg", label: "案件検索" },
+  { icon: "/icons/user.svg", label: "プロフィール", href: "/profile_test" },
+  { icon: "/icons/search.svg", label: "案件検索", href: "/offer" },
 ];
 
 interface HeaderProps {
@@ -27,26 +30,32 @@ export const Header: React.FC<HeaderProps> = ({ currentPage = "案件検索" }) 
     <header className="flex justify-between items-center px-0 py-3 w-full bg-white border-b border-solid border-b-zinc-400 h-[68px]">
       {/* 研Qアイコン */}
       <div className="flex items-center pl-5">
-        <Image
-          src="https://cdn.builder.io/api/v1/image/assets/TEMP/9596aba3e41dcacecfce7f89d2d6f34c5ab9cda6"
-          width={65}
-          height={110}
-          alt="Logo"
-          loading="lazy"
-        />
-        <Image
-          src="https://cdn.builder.io/api/v1/image/assets/TEMP/dd8de1f5773c4e53f322e8c2feedc5727b7def4f"
-          width={13}
-          height={13}
-          alt="Logo Detail"
-          loading="lazy"
-        />
+        <Link href="/home">
+          <Image
+            src="https://cdn.builder.io/api/v1/image/assets/TEMP/9596aba3e41dcacecfce7f89d2d6f34c5ab9cda6"
+            width={65}
+            height={110}
+            alt="Logo"
+            loading="lazy"
+          />
+          <Image
+            src="https://cdn.builder.io/api/v1/image/assets/TEMP/dd8de1f5773c4e53f322e8c2feedc5727b7def4f"
+            width={13}
+            height={13}
+            alt="Logo Detail"
+            loading="lazy"
+          />
+        </Link>
       </div>
 
       {/* メニューアイコン */}
       <nav className="flex gap-12 items-center ml-10">
         {navigationItems.map((item, index) => (
-          <div key={index} className="flex flex-col items-center relative pb-1">
+          <Link
+            key={index}
+            href={item.href}
+            className="flex flex-col items-center relative pb-1"
+          >
             <div className="flex gap-2.5 items-center text-base font-semibold cursor-pointer text-zinc-800">
               <div className="flex relative gap-2.5 items-center">
                 <Image
@@ -66,7 +75,7 @@ export const Header: React.FC<HeaderProps> = ({ currentPage = "案件検索" }) 
             {item.label === currentPage && (
               <div className="h-1 bg-violet-900 w-full absolute bottom-0 rounded-t"></div>
             )}
-          </div>
+          </Link>
         ))}
       </nav>
 
