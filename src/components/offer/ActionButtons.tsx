@@ -1,20 +1,18 @@
 import React from "react";
 
-export const ActionButtons: React.FC = () => {
-  const handleHide = () => {
-    // Implement hide functionality
-    console.log("Hide project");
-  };
+interface ActionButtonsProps {
+  onHide: () => void;
+  onContact: () => void;
+}
 
-  const handleContact = () => {
-    // Implement contact functionality
-    console.log("Contact about project");
-  };
-
+export const ActionButtons: React.FC<ActionButtonsProps> = ({
+  onHide,
+  onContact,
+}) => {
   return (
     <div className="flex flex-wrap gap-10 self-center mt-6 max-w-full text-base font-semibold text-black w-[645px] max-md:mt-4">
       <button
-        onClick={handleHide}
+        onClick={onHide}
         className="flex flex-1 flex-auto gap-3 justify-center items-center px-3 rounded-lg bg-zinc-400 min-h-12"
       >
         <span className="self-stretch text-[white] my-auto w-48">
@@ -22,7 +20,7 @@ export const ActionButtons: React.FC = () => {
         </span>
       </button>
       <button
-        onClick={handleContact}
+        onClick={onContact}
         className="flex flex-1 flex-auto gap-3 justify-center items-center px-3 rounded-lg bg-zinc-600 min-h-12"
       >
         <span className="self-stretch text-[white] my-auto w-48">

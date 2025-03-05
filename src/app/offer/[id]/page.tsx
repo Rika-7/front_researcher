@@ -6,6 +6,7 @@ import { OfferInfoCard } from "../../../components/offer/OfferInfoCard";
 import { ClientInfoCard } from "../../../components/offer/ClientInfoCard";
 import { ActionButtons } from "../../../components/offer/ActionButtons";
 import { BackToHome } from "../../../components/offer/BackToHome";
+import { ChatInterface } from "../../../components/offer/ChatInterface";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 
@@ -32,7 +33,7 @@ interface ProjectData {
 const projectsData: Record<string, ProjectData> = {
   project1: {
     id: "project1",
-    title: "製造工程の効率化によるエネルギーコストの削減",
+    title: "AIを用いた画像診断に関する最新の研究",
     date: "本日",
     tag: "#アドバイス・業務改善の相談（壁打ち程度）",
     description:
@@ -167,6 +168,7 @@ export default function OfferPageClient() {
   const params = useParams();
   const [project, setProject] = useState<ProjectData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showChat, setShowChat] = useState(false);
 
   useEffect(() => {
     // Get the project ID from the URL params
@@ -176,6 +178,25 @@ export default function OfferPageClient() {
     setProject(projectsData[projectId] || null);
     setLoading(false);
   }, [params]);
+
+  const handleHideProject = () => {
+    // Implementation for hiding the project
+    console.log("Hide project");
+    alert("案件を非表示にしました");
+    // In a real implementation, you might update the UI or redirect
+  };
+
+  const handleContactProject = () => {
+    // Show the chat interface
+    setShowChat(true);
+
+    // Scroll to chat
+    setTimeout(() => {
+      document.getElementById("chat-section")?.scrollIntoView({
+        behavior: "smooth",
+      });
+    }, 100);
+  };
 
   if (loading) {
     return (
@@ -228,8 +249,26 @@ export default function OfferPageClient() {
             </section>
           </div>
 
-          <footer className="flex flex-col items-center mt-4">
-            <ActionButtons />
+          {/* Chat interface - conditionally rendered */}
+          {showChat && (
+            <section id="chat-section" className="mt-8 w-full">
+              <h2 className="text-xl font-semibold mb-4 text-black">
+                チャット
+              </h2>
+              <ChatInterface
+                projectId={project.id}
+                clientName={project.requesterName || "クライアント"}
+              />
+            </section>
+          )}
+
+          <footer className="flex flex-col items-center mt-6">
+            {!showChat && (
+              <ActionButtons
+                onHide={handleHideProject}
+                onContact={handleContactProject}
+              />
+            )}
             <BackToHome />
           </footer>
         </div>
