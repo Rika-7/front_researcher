@@ -66,12 +66,12 @@ const news: News[] = [
 export default function ProjectDashboard() {
   return (
     <div className="w-full min-h-screen bg-gray-50">
-      <Header />
-      <main className="px-56 py-10 bg-gray-50 min-h-[calc(100vh_-_68px)] max-md:p-10 max-sm:p-5">
-        <h1 className="mb-10 text-5xl font-semibold text-violet-900 max-sm:text-4xl">
+      <Header currentPage="マイページ" />
+      <main className="px-20 py-6 bg-gray-50 min-h-[calc(100vh_-_68px)] max-md:px-12 max-md:py-4 max-sm:p-4">
+        <h1 className="mb-4 text-3xl font-semibold text-violet-900 max-sm:text-2xl">
           案件一覧
         </h1>
-        <div className="grid gap-12 grid-cols-[1fr_1fr] max-md:gap-10 max-md:grid-cols-[1fr]">
+        <div className="grid gap-8 grid-cols-[1fr_1fr] max-md:gap-6 max-md:grid-cols-[1fr]">
           <ProjectCard
             title="オファーあり"
             notificationCount={2}
