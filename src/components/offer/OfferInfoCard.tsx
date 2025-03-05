@@ -18,7 +18,7 @@ export const OfferInfoCard: React.FC = () => {
     <main className="flex flex-col mx-auto text-black rounded-2xl max-w-[1096px]">
       <article className="flex flex-col py-10 pr-16 pl-4 w-full bg-white rounded-2xl shadow-[0px_0px_15px_rgba(0,0,0,0.03),0px_2px_30px_rgba(0,0,0,0.08),0px_0px_1px_rgba(0,0,0,0.30)] max-md:px-5 max-md:py-6 max-sm:px-4 max-sm:py-4">
         <h1 className="mb-6 text-2xl font-semibold text-center max-md:text-xl max-sm:text-lg">
-          製造工程の効率化によるエネルギーコストの削減
+          AIを用いた画像診断に関する最新の研究
         </h1>
 
         {/* 情報フィールドを統一したセクション */}
