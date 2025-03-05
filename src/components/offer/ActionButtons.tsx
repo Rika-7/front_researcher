@@ -12,7 +12,7 @@ export const ActionButtons: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-wrap gap-10 self-center mt-12 max-w-full text-base font-semibold text-black w-[645px] max-md:mt-10">
+    <div className="flex flex-wrap gap-10 self-center mt-6 max-w-full text-base font-semibold text-black w-[645px] max-md:mt-4">
       <button
         onClick={handleHide}
         className="flex flex-1 flex-auto gap-3 justify-center items-center px-3 rounded-lg bg-zinc-400 min-h-12"

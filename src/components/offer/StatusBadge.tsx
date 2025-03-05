@@ -6,7 +6,7 @@ interface StatusBadgeProps {
 
 export const StatusBadge: React.FC<StatusBadgeProps> = ({ label }) => {
   return (
-    <span className="text-[white] px-3 py-2 font-semibold rounded-lg bg-zinc-400">
+    <span className="text-sm text-white px-3 py-1.5 font-semibold rounded-lg bg-zinc-400">
       {label}
     </span>
   );
