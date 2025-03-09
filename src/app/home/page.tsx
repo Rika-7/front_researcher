@@ -43,14 +43,6 @@ const inProgressProjects: Project[] = [
   },
 ];
 
-const onHoldProjects: Project[] = [
-  {
-    status: "回答する",
-    title: "AIを用いた画像診断に関する最新の研究",
-    tag: "#研究分野のヒアリング",
-  },
-];
-
 const news: News[] = [
   {
     date: "本日",
@@ -60,6 +52,10 @@ const news: News[] = [
   {
     date: "本日",
     title: "鏡リュウジが紹介する京都文教大学の魅力 第５回大橋良枝編",
+  },
+  {
+    date: "1日前",
+    title: "統合失調症の適応療法に加えたオンライン認知行動療法が有効〜患者さんのアクセシビリティを科学する",
   },
 ];
 
@@ -71,23 +67,69 @@ export default function ProjectDashboard() {
         <h1 className="mb-10 text-5xl font-semibold text-violet-900 max-sm:text-4xl">
           案件一覧
         </h1>
-        <div className="grid gap-12 grid-cols-[1fr_1fr] max-md:gap-10 max-md:grid-cols-[1fr]">
-          <ProjectCard
-            title="オファーあり"
-            notificationCount={2}
-            projects={offerProjects}
-          />
-          <ProjectCard
-            title="進行中"
-            notificationCount={1}
-            projects={inProgressProjects}
-          />
-          <ProjectCard
-            title="保留中"
-            notificationCount={1}
-            projects={onHoldProjects}
-          />
-          <NewsCard title="ニュース一覧" notificationCount={2} news={news} />
+        {/* 3列レイアウト（枠で囲むデザイン） */}
+        <div className="grid gap-12 grid-cols-[1fr_1fr_1fr] max-md:grid-cols-[1fr_1fr] max-sm:grid-cols-[1fr]">
+          {/* 新着オファー */}
+          <div className="border border-gray-300 rounded-lg p-4 bg-white shadow-sm">
+            <h2 className="text-xl font-semibold text-gray-900 text-center border-b pb-2 flex items-center justify-center gap-2">
+              新着オファー
+              <span className="bg-red-500 text-white text-sm font-bold px-2 py-1 rounded-full">
+                2
+              </span>
+            </h2>
+            <div className="mt-3 space-y-3">
+              {offerProjects.map((project, index) => (
+                <div key={index} className="border-t pt-3">
+                  <span className="bg-gray-800 text-white px-2 py-1 text-xs rounded">
+                    {project.date}
+                  </span>
+                  <h3 className="font-medium mt-2">{project.title}</h3>
+                  <p className="text-gray-600 text-sm">{project.tag}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* 進捗管理 */}
+          <div className="border border-gray-300 rounded-lg p-4 bg-white shadow-sm">
+            <h2 className="text-xl font-semibold text-gray-900 text-center border-b pb-2 flex items-center justify-center gap-2">
+              進捗管理
+              <span className="bg-red-500 text-white text-sm font-bold px-2 py-1 rounded-full">
+                1
+              </span>
+            </h2>
+            <div className="mt-3 space-y-3">
+              {inProgressProjects.map((project, index) => (
+                <div key={index} className="border-t pt-3">
+                  <span className="bg-gray-800 text-white px-2 py-1 text-xs rounded">
+                    {project.status}
+                  </span>
+                  <h3 className="font-medium mt-2">{project.title}</h3>
+                  <p className="text-gray-600 text-sm">{project.tag}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* お知らせ */}
+          <div className="border border-gray-300 rounded-lg p-4 bg-white shadow-sm">
+            <h2 className="text-xl font-semibold text-gray-900 text-center border-b pb-2 flex items-center justify-center gap-2">
+              お知らせ
+              <span className="bg-red-500 text-white text-sm font-bold px-2 py-1 rounded-full">
+                2
+              </span>
+            </h2>
+            <div className="mt-3 space-y-3">
+              {news.map((item, index) => (
+                <div key={index} className="border-t pt-3">
+                  <span className="bg-gray-800 text-white px-2 py-1 text-xs rounded">
+                    {item.date}
+                  </span>
+                  <h3 className="font-medium mt-2">{item.title}</h3>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </main>
     </div>
