@@ -18,7 +18,11 @@ const navigationItems: NavigationItem[] = [
     href: "/message",
   },
   { icon: "/icons/user.svg", label: "プロフィール", href: "/profile_test" },
-  { icon: "/icons/search.svg", label: "案件検索", href: "/offer" },
+  {
+    icon: "/icons/search.svg",
+    label: "案件検索",
+    href: "/search_researcher_results",
+  },
 ];
 
 interface HeaderProps {
