@@ -1,12 +1,16 @@
 import React from "react";
 
-export const BackToHome: React.FC = () => {
+interface BackToHomeProps {
+  researcherId?: string;
+}
+
+export const BackToHome: React.FC<BackToHomeProps> = ({ researcherId }) => {
   return (
     <a
-      href="/home"
+      href={`/home/${researcherId}`}
       className="self-center mt-8 text-sm font-semibold text-black underline"
     >
-      ホームにもどる
+      マイページにもどる
     </a>
   );
 };

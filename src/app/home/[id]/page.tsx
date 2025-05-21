@@ -1,12 +1,9 @@
-/*
-このページはダミー、後に削除してください
-*/
-
 "use client";
 import React, { useEffect, useState } from "react";
-import { Header } from "../../components/common/Header";
-import { ProjectCard } from "../../components/home/ProjectCard";
-import { NewsCard } from "../../components/home/NewsCard";
+import { Header } from "../../../components/common/Header";
+import { ProjectCard } from "../../../components/home/ProjectCard";
+import { NewsCard } from "../../../components/home/NewsCard";
+import { useParams } from "next/navigation";
 
 interface Project {
   date?: string;
@@ -24,6 +21,8 @@ interface News {
 }
 
 export default function ProjectDashboard() {
+  const params = useParams();
+  const researcher_id = params.id as string; 
   const [offerProjects, setOfferProjects] = useState<Project[]>([]);
   const [inProgressProjects, setInProgressProjects] = useState<Project[]>([]);
   const [onHoldProjects, setOnHoldProjects] = useState<Project[]>([]);
@@ -41,27 +40,27 @@ export default function ProjectDashboard() {
     },
   ];
 
-  const formatDeadline = (deadline: string) => {
-    if (!deadline) return "";
-
+  const formatDeadline = (deadline: string, status: number) => {
+    if (!deadline || status !== 1) return "";  // ステータスが1以外なら空文字を返す
+  
     const today = new Date();
     const targetDate = new Date(deadline);
-
+  
     const diffTime = targetDate.getTime() - today.setHours(0, 0, 0, 0);
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
+  
     if (diffDays < 0) return "回答期限が過ぎています";
     if (diffDays === 0) return "本日まで";
     if (diffDays === 1) return "明日まで";
     if (diffDays === 2) return "明後日まで";
-
+  
     return `${targetDate.getMonth() + 1}/${targetDate.getDate()}まで`;
   };
 
   useEffect(() => {
     const fetchProjects = async () => {
       const statuses = [1, 2, 4];
-      const researcher_id = 7782;
+      const researcher_id = params.id as string;
       const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
       let offer: Project[] = [];
@@ -76,10 +75,10 @@ export default function ProjectDashboard() {
 
         if (data.status === "success") {
           const formattedProjects = data.projects.map((p: any) => ({
-            date: formatDeadline(p.application_deadline),
+            date: formatDeadline(p.application_deadline, status),
             title: p.project_title,
             tag: p.company_name,
-            id: p.project_id.toString(),
+            id: p.matching_id.toString(),
           }));
 
           if (status === 1) offer = formattedProjects;
@@ -94,18 +93,18 @@ export default function ProjectDashboard() {
     };
 
     fetchProjects();
-  }, []);
+  },  [params.id]);
 
-  const handleNavigateToOffer = (projectId: string) => {
-    console.log(`Navigating to project: ${projectId}`);
+  const handleNavigateToOffer = (matchingId: string) => {
+    window.location.href = `/offer/${matchingId}`;
   };
 
   return (
     <div className="w-full min-h-screen bg-gray-50">
-      <Header currentPage="マイページ" />
+      <Header currentPage="マイページ" researcherId={researcher_id} />
       <main className="px-20 py-6 bg-gray-50 min-h-[calc(100vh_-_68px)] max-md:px-12 max-md:py-4 max-sm:p-4">
         <h1 className="mb-4 text-3xl font-semibold text-violet-900 max-sm:text-2xl">
-          案件一覧 ※ダミーのマイページです！！！
+          案件一覧
         </h1>
         <div className="grid gap-8 grid-cols-[1fr_1fr] max-md:gap-6 max-md:grid-cols-[1fr]">
           <ProjectCard
@@ -120,6 +119,7 @@ export default function ProjectDashboard() {
             projects={inProgressProjects}
             onTitleClick={handleNavigateToOffer}
           />
+          {/* 一旦ここは削除
           <ProjectCard
             title="保留中"
             notificationCount={onHoldProjects.length}
@@ -127,6 +127,7 @@ export default function ProjectDashboard() {
             onTitleClick={handleNavigateToOffer}
           />
           <NewsCard title="ニュース一覧" notificationCount={news.length} news={news} />
+          */}
         </div>
       </main>
     </div>
