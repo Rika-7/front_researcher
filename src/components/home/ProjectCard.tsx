@@ -48,11 +48,14 @@ export const ProjectCard: React.FC<ProjectSectionProps> = ({
           key={index}
           className="p-5 mt-2 rounded-2xl shadow-[0px_0px_15px_rgba(0,0,0,0.03),0px_2px_30px_rgba(0,0,0,0.08),0px_0px_1px_rgba(0,0,0,0.30)] bg-white"
         >
-          <header className="mb-2">
-            <div className="px-4 py-1.5 text-sm font-semibold rounded-lg bg-zinc-600 text-[white] inline-block">
-              {date || status}
-            </div>
-          </header>
+          {date && (
+            <header className="mb-2">
+              <div className="px-4 py-1.5 text-sm font-semibold rounded-lg bg-zinc-600 text-[white] inline-block">
+                {date}
+              </div>
+            </header>
+          )}
+
           <Link
             href={`/offer/${id}`}
             className="block"

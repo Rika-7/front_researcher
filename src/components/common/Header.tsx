@@ -9,8 +9,8 @@ interface NavigationItem {
   href: string;
 }
 
-const navigationItems: NavigationItem[] = [
-  { icon: "/icons/clipboard.svg", label: "マイページ", href: "/home" },
+const getNavigationItems = (researcherId?: string): NavigationItem[] => [
+  { icon: "/icons/clipboard.svg", label: "マイページ", href: `/home/${researcherId || ""}` },
   {
     icon: "/icons/mail.svg",
     label: "メッセージ",
@@ -27,26 +27,21 @@ const navigationItems: NavigationItem[] = [
 
 interface HeaderProps {
   currentPage?: string;
+  researcherId?: string;
 }
 
-export const Header: React.FC<HeaderProps> = ({ currentPage = "案件検索" }) => {
+export const Header: React.FC<HeaderProps> = ({ currentPage = "マイページ", researcherId }) => {
+  const navigationItems = getNavigationItems(researcherId);
   return (
     <header className="flex justify-between items-center px-0 py-3 w-full bg-white border-b border-solid border-b-zinc-400 h-[68px]">
       {/* 研Qアイコン */}
       <div className="flex items-center pl-5">
-        <Link href="/home">
+        <Link href="/">
           <Image
-            src="https://cdn.builder.io/api/v1/image/assets/TEMP/9596aba3e41dcacecfce7f89d2d6f34c5ab9cda6"
+            src="/icons/kenq_logo.png"
             width={65}
             height={110}
             alt="Logo"
-            loading="lazy"
-          />
-          <Image
-            src="https://cdn.builder.io/api/v1/image/assets/TEMP/dd8de1f5773c4e53f322e8c2feedc5727b7def4f"
-            width={13}
-            height={13}
-            alt="Logo Detail"
             loading="lazy"
           />
         </Link>
@@ -88,7 +83,7 @@ export const Header: React.FC<HeaderProps> = ({ currentPage = "案件検索" }) 
         <i className="ti ti-bell max-sm:text-2xl" />
         <div className="flex gap-2 items-center">
           <Image
-            src="https://cdn.builder.io/api/v1/image/assets/TEMP/45b09393f1818710594c44e581a2223aea6cbe25"
+            src="/icons/dumy_human.png"
             className="rounded-full"
             width={36}
             height={36}
@@ -96,7 +91,7 @@ export const Header: React.FC<HeaderProps> = ({ currentPage = "案件検索" }) 
             loading="lazy"
           />
           <span className="text-sm font-bold text-zinc-800">
-            Satoru Moriaki
+            Okazaki Taku
           </span>
         </div>
       </div>

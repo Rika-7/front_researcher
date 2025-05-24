@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useEffect, useState } from "react";
 import { Header } from "../../../components/common/Header";
 import { StatusBadge } from "../../../components/offer/StatusBadge";
@@ -10,14 +11,14 @@ import { ChatInterface } from "../../../components/offer/ChatInterface";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 
-// Define project data structure
 interface ProjectData {
   id: string;
+  researcher_id:string;
   title: string;
   date?: string;
   tag?: string;
   description?: string;
-  status?: string;
+  status?: number;
   category?: string;
   field?: string;
   requestDate?: string;
@@ -29,180 +30,134 @@ interface ProjectData {
   matchingCount?: number;
 }
 
-// This data should match the data in your main page.tsx
-const projectsData: Record<string, ProjectData> = {
-  project1: {
-    id: "project1",
-    title: "AIを用いた画像診断に関する最新の研究",
-    date: "本日",
-    tag: "#アドバイス・業務改善の相談（壁打ち程度）",
-    description:
-      "AIを用いた医療画像診断について、開発の方向性を決めるため、最新の知見を調査しています。具体的には、X線、MRI、CTスキャンなどの画像解析におけるディープラーニング技術の関心があります。このような技術が、どのようにがんの早期発見やその他の疾患診断に活用されているのか、現場での実際の使用例やその効果、精度向上のための現在の課題について知りたいと考えています。また、今後の技術発展の見通しや、臨床現場への導入に際しての課題についても、ご意見を伺いたいです。",
-    status: "募集中",
-    category: "研究分野のヒアリング",
-    field: "ライフサイエンス",
-    requestDate: "2025年2月5日",
-    responseDeadline: "2025年2月20日までに",
-    requesterName: "大谷 太郎",
-    requesterCompany: "株式会社 TechA3",
-    requesterDepartment: "ライフサイエンス研究部",
-    requestCount: 3,
-    matchingCount: 2,
-  },
-  project2: {
-    id: "project2",
-    title: "環境負荷を考慮した新製品の開発戦略",
-    date: "9日前",
-    tag: "#アドバイス・業務改善の相談（壁打ち程度）",
-    description:
-      "環境に配慮した新製品開発の戦略について、専門家のアドバイスを求めています。持続可能な製品設計のベストプラクティスを知りたいです。",
-    status: "オファーあり",
-  },
-  project3: {
-    id: "project3",
-    title: "飲料製品製造過程における環境負荷の測定",
-    tag: "#コンサルティング・共同研究の相談",
-    description:
-      "飲料製品の製造過程における環境負荷を正確に測定する方法について相談したいです。特にカーボンフットプリントの計算方法に関心があります。",
-    status: "進行中",
-  },
-  project4: {
-    id: "project4",
-    title: "製品輸送時のカーボンフットプリントの削減",
-    tag: "#アドバイス・業務改善の相談（壁打ち程度）",
-    description:
-      "製品輸送時のカーボンフットプリントを削減するための効果的な方法について助言を求めています。",
-    status: "進行中",
-  },
-  project5: {
-    id: "project5",
-    title: "AIを用いた画像診断に関する最新の研究",
-    tag: "#研究分野のヒアリング",
-    description:
-      "AIを活用した画像診断技術の最新研究動向について知りたいです。特に医療分野での応用可能性に興味があります。",
-    status: "保留中",
-  },
+const formatJapaneseDate = (dateString?: string) => {
+  if (!dateString) return "未指定";
+  const date = new Date(dateString);
+  return date.toLocaleDateString("ja-JP", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
 };
 
-// Extend OfferInfoCard to accept project data
-interface ExtendedOfferInfoCardProps {
-  project: ProjectData;
-}
-
-// This is a wrapper for the existing OfferInfoCard that injects project data
-const OfferInfoCardWithData: React.FC<ExtendedOfferInfoCardProps> = ({
-  project,
-}) => {
-  // Override offerData global variable that OfferInfoCard uses
-  (
-    globalThis as unknown as { offerData: { label: string; value: string }[] }
-  ).offerData = [
+const OfferInfoCardWithData: React.FC<{ project: ProjectData }> = ({ project }) => {
+  (globalThis as any).offerData = [
     { label: "カテゴリ", value: project.category || "研究分野のヒアリング" },
     { label: "研究分野", value: project.field || "ライフサイエンス" },
-    {
-      label: "内容",
-      value:
-        project.description ||
-        "AIを用いた医療画像診断について、開発の方向性を決めるため、最新の知見を調査しています。",
-    },
-    { label: "依頼日", value: project.requestDate || "2025年2月5日" },
-    {
-      label: "返信希望日",
-      value: project.responseDeadline || "2025年2月20日までに",
-    },
+    { label: "内容", value: project.description || "" },
+    { label: "依頼日", value: formatJapaneseDate(project.requestDate) },
+    { label: "返信希望日", value: formatJapaneseDate(project.responseDeadline) },
   ];
-
-  // Also need to modify the title in the component
-  const originalRender = OfferInfoCard.prototype?.render;
-  if (originalRender) {
-    OfferInfoCard.prototype.render = function () {
-      const result = originalRender.apply(this);
-      if (
-        result &&
-        result.props &&
-        result.props.children &&
-        result.props.children.props &&
-        result.props.children.props.children
-      ) {
-        const title = result.props.children.props.children[0];
-        if (title && title.props) {
-          title.props.children = project.title;
-        }
-      }
-      return result;
-    };
-  }
-
   return <OfferInfoCard />;
 };
 
-// Extend ClientInfoCard to accept project data
-interface ExtendedClientInfoCardProps {
-  project: ProjectData;
-}
-
-// This is a wrapper for the existing ClientInfoCard that injects project data
-// into the component's scope so it can access the requester information
-const ClientInfoCardWithData: React.FC<ExtendedClientInfoCardProps> = ({
-  project,
-}) => {
-  // Override clientData global variable that ClientInfoCard uses
-  (
-    globalThis as unknown as { clientData: { label: string; value: string }[] }
-  ).clientData = [
-    { label: "名前", value: project.requesterName || "大谷 太郎" },
-    { label: "会社名:", value: project.requesterCompany || "株式会社 TechA3" },
-    {
-      label: "部署名",
-      value: project.requesterDepartment || "ライフサイエンス研究部",
-    },
-    { label: "依頼回数", value: `${project.requestCount || 3}回` },
-    { label: "マッチング回数", value: `${project.matchingCount || 2}回` },
+const ClientInfoCardWithData: React.FC<{ project: ProjectData }> = ({ project }) => {
+  (globalThis as any).clientData = [
+    { label: "名前", value: project.requesterName || "" },
+    { label: "会社名:", value: project.requesterCompany || "" },
+    { label: "部署名", value: project.requesterDepartment || "" },
+    { label: "依頼回数", value: `${project.requestCount ?? "-"}回` },
+    { label: "マッチング回数", value: `${project.matchingCount ?? "-"}回` },
   ];
-
   return <ClientInfoCard />;
 };
 
-// Client-side component for accessing params
+const getStatusLabel = (status?: number) => {
+  switch (status) {
+    case 1:
+      return "募集中";
+    case 2:
+      return "進行中";
+    case 3:
+      return "非表示";
+    case 0:
+      return "未対応";
+    default:
+      return "不明";
+  }
+};
+
+
 export default function OfferPageClient() {
   const params = useParams();
   const [project, setProject] = useState<ProjectData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [showChat, setShowChat] = useState(false);
 
   useEffect(() => {
-    // Get the project ID from the URL params
-    const projectId = params.id as string;
+    const fetchProject = async () => {
+      const matchingId = params.id as string;
 
-    // Find the project in our data
-    setProject(projectsData[projectId] || null);
-    setLoading(false);
+      try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matching-id/${matchingId}`);
+        const data = await res.json();
+
+        if (data.status === "success") {
+          const p = data.project;
+          setProject({
+            id: p.project_id.toString(),
+            researcher_id: p.researcher_id,
+            title: p.project_title,
+            date: p.application_deadline,
+            status: Number(p.matching_status),
+            tag: `#${p.consultation_category}`,
+            description: p.project_content,
+            requestDate:p.matched_date,
+            responseDeadline:p.application_deadline,
+            category: p.consultation_category,
+            field: p.research_field,
+            requesterName: p.company_user_name,
+            requesterCompany: p.company_name,
+            requesterDepartment: p.department,
+            requestCount: 3, // APIがなければ仮値
+            matchingCount: 2, // APIがなければ仮値
+          });
+        } else {
+          setProject(null);
+        }
+      } catch (error) {
+        console.error("プロジェクト取得エラー:", error);
+        setProject(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProject();
   }, [params]);
 
   const handleHideProject = () => {
-    // Implementation for hiding the project
-    console.log("Hide project");
     alert("案件を非表示にしました");
-    // In a real implementation, you might update the UI or redirect
   };
 
-  const handleContactProject = () => {
-    // Show the chat interface
-    setShowChat(true);
-
-    // Scroll to chat
-    setTimeout(() => {
-      document.getElementById("chat-section")?.scrollIntoView({
-        behavior: "smooth",
-      });
-    }, 100);
+  const handleContactProject = async () => {
+    const matchingId = params.id as string;
+  
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/matching-status/${matchingId}?new_status=2`,
+        { method: "PATCH" }
+      );
+      const data = await res.json();
+  
+      if (data.status === "success") {
+        setProject((prev) => prev ? { ...prev, status: 2 } : prev);
+        setTimeout(() => {
+          document.getElementById("chat-section")?.scrollIntoView({ behavior: "smooth" });
+        }, 100);
+      } else {
+        alert("ステータス更新に失敗しました");
+      }
+    } catch (error) {
+      console.error("通信エラー:", error);
+      alert("エラーが発生しました");
+    }
   };
 
   if (loading) {
     return (
       <div className="w-full min-h-screen bg-gray-50">
-        <Header currentPage="案件検索" />
-        <main className="px-20 py-6 bg-gray-50 min-h-[calc(100vh_-_68px)] max-md:px-12 max-md:py-4 max-sm:p-4">
+        <Header currentPage="マイページ" />
+        <main className="px-20 py-6 bg-gray-50 min-h-[calc(100vh_-_68px)]">
           <p>Loading...</p>
         </main>
       </div>
@@ -212,16 +167,11 @@ export default function OfferPageClient() {
   if (!project) {
     return (
       <div className="w-full min-h-screen bg-gray-50">
-        <Header currentPage="案件検索" />
-        <main className="px-20 py-6 bg-gray-50 min-h-[calc(100vh_-_68px)] max-md:px-12 max-md:py-4 max-sm:p-4">
-          <h1 className="mb-4 text-2xl font-semibold text-violet-900 max-sm:text-xl">
-            案件が見つかりません
-          </h1>
+        <Header currentPage="マイページ" />
+        <main className="px-20 py-6 bg-gray-50 min-h-[calc(100vh_-_68px)]">
+          <h1 className="mb-4 text-2xl font-semibold text-violet-900">案件が見つかりません</h1>
           <p>指定されたIDの案件は存在しません。</p>
-          <Link
-            href="/"
-            className="text-violet-700 hover:underline mt-4 inline-block"
-          >
+          <Link href="/" className="text-violet-700 hover:underline mt-4 inline-block">
             ← ホームに戻る
           </Link>
         </main>
@@ -229,32 +179,27 @@ export default function OfferPageClient() {
     );
   }
 
-  // When project is found, render the full page with components
   return (
-    <main className="w-full bg-gray-50 min-h-screen max-md:max-w-full">
-      <Header currentPage="案件検索" />
-      <div className="flex flex-col justify-center items-center px-20 py-8 w-full bg-gray-50 max-md:px-5 max-md:pb-16 max-md:max-w-full">
-        <div className="flex flex-col w-full max-w-[1432px] max-md:mb-2.5 max-md:max-w-full">
-          <header className="flex flex-wrap gap-5 max-w-full font-semibold whitespace-nowrap w-[1019px] mb-6">
-            <StatusBadge label={project.status || "募集中"} />
-            <h1 className="flex-auto text-3xl text-black w-[857px] max-md:text-2xl max-md:max-w-full">
-              {project.title}
-            </h1>
+    <main className="w-full bg-gray-50 min-h-screen">
+      <Header currentPage="マイページ" researcherId={project.researcher_id} />
+      <div className="flex flex-col justify-center items-center px-20 py-8 w-full bg-gray-50 max-md:px-5">
+        <div className="flex flex-col w-full max-w-[1432px]">
+          <header className="flex flex-wrap gap-5 font-semibold w-full mb-6">
+            <StatusBadge label={getStatusLabel(project.status)} />
+            <h1 className="text-3xl text-black">{project.title}</h1>
           </header>
 
-          <div className="mt-4 max-md:mt-4 max-md:max-w-full">
-            <section className="flex gap-5 max-md:flex-col">
+          <div className="mt-4">
+            <section className="flex gap-1 max-md:flex-col">
               <ClientInfoCardWithData project={project} />
               <OfferInfoCardWithData project={project} />
             </section>
           </div>
 
-          {/* Chat interface - conditionally rendered */}
-          {showChat && (
+          <footer className="flex flex-col items-center mt-6">
+          {project.status === 2 && (
             <section id="chat-section" className="mt-8 w-full">
-              <h2 className="text-xl font-semibold mb-4 text-black">
-                チャット
-              </h2>
+              <h2 className="text-xl font-semibold mb-4 text-black">チャット</h2>
               <ChatInterface
                 projectId={project.id}
                 clientName={project.requesterName || "クライアント"}
@@ -262,14 +207,21 @@ export default function OfferPageClient() {
             </section>
           )}
 
-          <footer className="flex flex-col items-center mt-6">
-            {!showChat && (
-              <ActionButtons
-                onHide={handleHideProject}
-                onContact={handleContactProject}
-              />
+          {project.status === 1 && (
+            <ActionButtons
+              matchingId={params.id as string}
+              onHide={handleHideProject}
+              onContact={handleContactProject}
+            />
+          )}
+
+            {(project.status === 0 || project.status === 3) && (
+              <div className="text-center text-gray-500 mt-6 text-lg">
+                非表示にした案件情報です
+              </div>
             )}
-            <BackToHome />
+
+          <BackToHome researcherId={project.researcher_id} />
           </footer>
         </div>
       </div>
