@@ -68,7 +68,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
     setTimeout(() => {
       const responseMsg: Message = {
         id: (Date.now() + 1).toString(),
-        text: `Thank you for your message. I'll get back to you soon.`,
+        text: `ありがとうございます。`,
         sender: "client",
         timestamp: new Date(),
       };
@@ -84,7 +84,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   return (
     <div className="flex flex-col w-full bg-white rounded-2xl shadow-[0px_0px_15px_rgba(0,0,0,0.03),0px_2px_30px_rgba(0,0,0,0.08),0px_0px_1px_rgba(0,0,0,0.30)] overflow-hidden">
       <div className="bg-zinc-600 p-4 text-white">
-        <h2 className="text-lg font-semibold">{clientName} とのチャット</h2>
+        <h2 className="text-lg font-semibold">{clientName} 様とのチャット</h2>
       </div>
 
       {/* Messages container */}
