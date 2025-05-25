@@ -43,7 +43,7 @@ export const ProjectCard: React.FC<ProjectSectionProps> = ({
       </header>
 
       {/* プロジェクトカード一覧 */}
-      {projects.map(({ date, status, title, tag, id = "" }, index) => (
+      {projects.map(({ date, title, tag, id = "" }, index) => (
         <article
           key={index}
           className="p-5 mt-2 rounded-2xl shadow-[0px_0px_15px_rgba(0,0,0,0.03),0px_2px_30px_rgba(0,0,0,0.08),0px_0px_1px_rgba(0,0,0,0.30)] bg-white"

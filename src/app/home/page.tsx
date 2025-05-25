@@ -23,6 +23,14 @@ interface News {
   id?: string;
 }
 
+// Interface for API response project data
+interface ApiProject {
+  project_title: string;
+  company_name: string;
+  project_id: number;
+  application_deadline: string;
+}
+
 export default function ProjectDashboard() {
   const [offerProjects, setOfferProjects] = useState<Project[]>([]);
   const [inProgressProjects, setInProgressProjects] = useState<Project[]>([]);
@@ -31,7 +39,8 @@ export default function ProjectDashboard() {
   const news: News[] = [
     {
       date: "本日",
-      title: "【3月15~16日開催】ELSI大学サミット ～AIを中心とした倫理的、法律的、社会的課題の取り組みを・・・",
+      title:
+        "【3月15~16日開催】ELSI大学サミット ～AIを中心とした倫理的、法律的、社会的課題の取り組みを・・・",
       id: "news1",
     },
     {
@@ -75,7 +84,7 @@ export default function ProjectDashboard() {
         const data = await response.json();
 
         if (data.status === "success") {
-          const formattedProjects = data.projects.map((p: any) => ({
+          const formattedProjects = data.projects.map((p: ApiProject) => ({
             date: formatDeadline(p.application_deadline),
             title: p.project_title,
             tag: p.company_name,
@@ -126,7 +135,11 @@ export default function ProjectDashboard() {
             projects={onHoldProjects}
             onTitleClick={handleNavigateToOffer}
           />
-          <NewsCard title="ニュース一覧" notificationCount={news.length} news={news} />
+          <NewsCard
+            title="ニュース一覧"
+            notificationCount={news.length}
+            news={news}
+          />
         </div>
       </main>
     </div>
