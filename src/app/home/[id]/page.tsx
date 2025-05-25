@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from "react";
 import { Header } from "../../../components/common/Header";
 import { ProjectCard } from "../../../components/home/ProjectCard";
-import { NewsCard } from "../../../components/home/NewsCard";
 import { useParams } from "next/navigation";
 
 interface Project {
@@ -13,59 +12,45 @@ interface Project {
   id?: string;
 }
 
-interface News {
-  date?: string;
-  status?: string;
-  title: string;
-  id?: string;
+// Interface for API response project data
+interface ApiProject {
+  project_title: string;
+  company_name: string;
+  matching_id: number;
+  application_deadline: string;
 }
 
 export default function ProjectDashboard() {
   const params = useParams();
-  const researcher_id = params.id as string; 
+  const researcher_id = params.id as string;
   const [offerProjects, setOfferProjects] = useState<Project[]>([]);
   const [inProgressProjects, setInProgressProjects] = useState<Project[]>([]);
-  const [onHoldProjects, setOnHoldProjects] = useState<Project[]>([]);
-
-  const news: News[] = [
-    {
-      date: "本日",
-      title: "【3月15~16日開催】ELSI大学サミット ～AIを中心とした倫理的、法律的、社会的課題の取り組みを・・・",
-      id: "news1",
-    },
-    {
-      date: "本日",
-      title: "鏡リュウジが紹介する京都文教大学の魅力 第５回大橋良枝編",
-      id: "news2",
-    },
-  ];
 
   const formatDeadline = (deadline: string, status: number) => {
-    if (!deadline || status !== 1) return "";  // ステータスが1以外なら空文字を返す
-  
+    if (!deadline || status !== 1) return ""; // ステータスが1以外なら空文字を返す
+
     const today = new Date();
     const targetDate = new Date(deadline);
-  
+
     const diffTime = targetDate.getTime() - today.setHours(0, 0, 0, 0);
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  
+
     if (diffDays < 0) return "回答期限が過ぎています";
     if (diffDays === 0) return "本日まで";
     if (diffDays === 1) return "明日まで";
     if (diffDays === 2) return "明後日まで";
-  
+
     return `${targetDate.getMonth() + 1}/${targetDate.getDate()}まで`;
   };
 
   useEffect(() => {
     const fetchProjects = async () => {
-      const statuses = [1, 2, 4];
+      const statuses = [1, 2];
       const researcher_id = params.id as string;
       const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
       let offer: Project[] = [];
       let inProgress: Project[] = [];
-      let onHold: Project[] = [];
 
       for (const status of statuses) {
         const response = await fetch(
@@ -74,7 +59,7 @@ export default function ProjectDashboard() {
         const data = await response.json();
 
         if (data.status === "success") {
-          const formattedProjects = data.projects.map((p: any) => ({
+          const formattedProjects = data.projects.map((p: ApiProject) => ({
             date: formatDeadline(p.application_deadline, status),
             title: p.project_title,
             tag: p.company_name,
@@ -83,17 +68,15 @@ export default function ProjectDashboard() {
 
           if (status === 1) offer = formattedProjects;
           if (status === 2) inProgress = formattedProjects;
-          if (status === 4) onHold = formattedProjects;
         }
       }
 
       setOfferProjects(offer);
       setInProgressProjects(inProgress);
-      setOnHoldProjects(onHold);
     };
 
     fetchProjects();
-  },  [params.id]);
+  }, [params.id]);
 
   const handleNavigateToOffer = (matchingId: string) => {
     window.location.href = `/offer/${matchingId}`;

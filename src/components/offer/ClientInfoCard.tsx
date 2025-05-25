@@ -5,6 +5,17 @@ interface InfoFieldProps {
   value: string;
 }
 
+// Interface for client data structure
+interface ClientDataItem {
+  label: string;
+  value: string;
+}
+
+// Type for globalThis with clientData property
+interface GlobalThisWithClientData {
+  clientData?: ClientDataItem[];
+}
+
 const InfoField: React.FC<InfoFieldProps> = ({ label, value }) => {
   return (
     <div className="relative w-full text-black rounded min-h-[64px]">
@@ -27,7 +38,7 @@ const InfoField: React.FC<InfoFieldProps> = ({ label, value }) => {
 };
 
 export const ClientInfoCard: React.FC = () => {
-  const clientData = (globalThis as any).clientData || [];
+  const clientData = (globalThis as GlobalThisWithClientData).clientData || [];
 
   return (
     <div className="w-[21%] max-md:ml-0 max-md:w-full">
@@ -36,7 +47,7 @@ export const ClientInfoCard: React.FC = () => {
           依頼者情報
         </h2>
         <div className="flex flex-col gap-6 mt-8">
-          {clientData.map(({ label, value }: { label: string; value: string }) => (
+          {clientData.map(({ label, value }: ClientDataItem) => (
             <InfoField key={label} label={label} value={value} />
           ))}
         </div>

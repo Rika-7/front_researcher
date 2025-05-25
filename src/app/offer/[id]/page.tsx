@@ -11,9 +11,15 @@ import { ChatInterface } from "../../../components/offer/ChatInterface";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 
+// Define interfaces for data structures
+interface DataItem {
+  label: string;
+  value: string;
+}
+
 interface ProjectData {
   id: string;
-  researcher_id:string;
+  researcher_id: string;
   title: string;
   date?: string;
   tag?: string;
@@ -30,6 +36,12 @@ interface ProjectData {
   matchingCount?: number;
 }
 
+// Type for globalThis with our custom properties
+interface GlobalThisWithData {
+  offerData?: DataItem[];
+  clientData?: DataItem[];
+}
+
 const formatJapaneseDate = (dateString?: string) => {
   if (!dateString) return "未指定";
   const date = new Date(dateString);
@@ -40,19 +52,26 @@ const formatJapaneseDate = (dateString?: string) => {
   });
 };
 
-const OfferInfoCardWithData: React.FC<{ project: ProjectData }> = ({ project }) => {
-  (globalThis as any).offerData = [
+const OfferInfoCardWithData: React.FC<{ project: ProjectData }> = ({
+  project,
+}) => {
+  (globalThis as GlobalThisWithData).offerData = [
     { label: "カテゴリ", value: project.category || "研究分野のヒアリング" },
     { label: "研究分野", value: project.field || "ライフサイエンス" },
     { label: "内容", value: project.description || "" },
     { label: "依頼日", value: formatJapaneseDate(project.requestDate) },
-    { label: "返信希望日", value: formatJapaneseDate(project.responseDeadline) },
+    {
+      label: "返信希望日",
+      value: formatJapaneseDate(project.responseDeadline),
+    },
   ];
   return <OfferInfoCard />;
 };
 
-const ClientInfoCardWithData: React.FC<{ project: ProjectData }> = ({ project }) => {
-  (globalThis as any).clientData = [
+const ClientInfoCardWithData: React.FC<{ project: ProjectData }> = ({
+  project,
+}) => {
+  (globalThis as GlobalThisWithData).clientData = [
     { label: "名前", value: project.requesterName || "" },
     { label: "会社名:", value: project.requesterCompany || "" },
     { label: "部署名", value: project.requesterDepartment || "" },
@@ -77,7 +96,6 @@ const getStatusLabel = (status?: number) => {
   }
 };
 
-
 export default function OfferPageClient() {
   const params = useParams();
   const [project, setProject] = useState<ProjectData | null>(null);
@@ -88,7 +106,9 @@ export default function OfferPageClient() {
       const matchingId = params.id as string;
 
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matching-id/${matchingId}`);
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/matching-id/${matchingId}`
+        );
         const data = await res.json();
 
         if (data.status === "success") {
@@ -101,8 +121,8 @@ export default function OfferPageClient() {
             status: Number(p.matching_status),
             tag: `#${p.consultation_category}`,
             description: p.project_content,
-            requestDate:p.matched_date,
-            responseDeadline:p.application_deadline,
+            requestDate: p.matched_date,
+            responseDeadline: p.application_deadline,
             category: p.consultation_category,
             field: p.research_field,
             requesterName: p.company_user_name,
@@ -131,18 +151,20 @@ export default function OfferPageClient() {
 
   const handleContactProject = async () => {
     const matchingId = params.id as string;
-  
+
     try {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/matching-status/${matchingId}?new_status=2`,
         { method: "PATCH" }
       );
       const data = await res.json();
-  
+
       if (data.status === "success") {
-        setProject((prev) => prev ? { ...prev, status: 2 } : prev);
+        setProject((prev) => (prev ? { ...prev, status: 2 } : prev));
         setTimeout(() => {
-          document.getElementById("chat-section")?.scrollIntoView({ behavior: "smooth" });
+          document
+            .getElementById("chat-section")
+            ?.scrollIntoView({ behavior: "smooth" });
         }, 100);
       } else {
         alert("ステータス更新に失敗しました");
@@ -169,9 +191,14 @@ export default function OfferPageClient() {
       <div className="w-full min-h-screen bg-gray-50">
         <Header currentPage="マイページ" />
         <main className="px-20 py-6 bg-gray-50 min-h-[calc(100vh_-_68px)]">
-          <h1 className="mb-4 text-2xl font-semibold text-violet-900">案件が見つかりません</h1>
+          <h1 className="mb-4 text-2xl font-semibold text-violet-900">
+            案件が見つかりません
+          </h1>
           <p>指定されたIDの案件は存在しません。</p>
-          <Link href="/" className="text-violet-700 hover:underline mt-4 inline-block">
+          <Link
+            href="/"
+            className="text-violet-700 hover:underline mt-4 inline-block"
+          >
             ← ホームに戻る
           </Link>
         </main>
@@ -197,23 +224,25 @@ export default function OfferPageClient() {
           </div>
 
           <footer className="flex flex-col items-center mt-6">
-          {project.status === 2 && (
-            <section id="chat-section" className="mt-8 w-full">
-              <h2 className="text-xl font-semibold mb-4 text-black">チャット</h2>
-              <ChatInterface
-                projectId={project.id}
-                clientName={project.requesterName || "クライアント"}
-              />
-            </section>
-          )}
+            {project.status === 2 && (
+              <section id="chat-section" className="mt-8 w-full">
+                <h2 className="text-xl font-semibold mb-4 text-black">
+                  チャット
+                </h2>
+                <ChatInterface
+                  projectId={project.id}
+                  clientName={project.requesterName || "クライアント"}
+                />
+              </section>
+            )}
 
-          {project.status === 1 && (
-            <ActionButtons
-              matchingId={params.id as string}
-              onHide={handleHideProject}
-              onContact={handleContactProject}
-            />
-          )}
+            {project.status === 1 && (
+              <ActionButtons
+                matchingId={params.id as string}
+                onHide={handleHideProject}
+                onContact={handleContactProject}
+              />
+            )}
 
             {(project.status === 0 || project.status === 3) && (
               <div className="text-center text-gray-500 mt-6 text-lg">
@@ -221,7 +250,7 @@ export default function OfferPageClient() {
               </div>
             )}
 
-          <BackToHome researcherId={project.researcher_id} />
+            <BackToHome researcherId={project.researcher_id} />
           </footer>
         </div>
       </div>

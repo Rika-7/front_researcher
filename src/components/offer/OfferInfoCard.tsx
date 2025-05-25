@@ -1,7 +1,18 @@
 import React from "react";
 
+// Interface for offer data structure
+interface OfferDataItem {
+  label: string;
+  value: string;
+}
+
+// Type for globalThis with offerData property
+interface GlobalThisWithOfferData {
+  offerData?: OfferDataItem[];
+}
+
 export const OfferInfoCard: React.FC = () => {
-  const offerData = (globalThis as any).offerData || [];
+  const offerData = (globalThis as GlobalThisWithOfferData).offerData || [];
 
   return (
     <main className="flex flex-col mx-auto text-black rounded-2xl max-w-[1096px]">
@@ -10,7 +21,7 @@ export const OfferInfoCard: React.FC = () => {
           依頼内容
         </h1>
 
-        {offerData.map(({ label, value }: { label: string; value: string }) => (
+        {offerData.map(({ label, value }: OfferDataItem) => (
           <section
             key={label}
             className="flex flex-col mb-3 rounded-2xl max-md:mb-2"
