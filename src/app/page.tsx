@@ -9,6 +9,14 @@ interface Researcher {
   id: string;
 }
 
+// Interface for API response researcher data
+interface ApiResearcher {
+  researcher_name: string;
+  researcher_affiliation_current: string;
+  researcher_department_current: string;
+  researcher_id: string;
+}
+
 export default function Home() {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<Researcher[]>([]);
@@ -16,13 +24,15 @@ export default function Home() {
 
   const handleSearch = async () => {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/search-researcher?name=${encodeURIComponent(query)}`
+      `${
+        process.env.NEXT_PUBLIC_API_URL
+      }/search-researcher?name=${encodeURIComponent(query)}`
     );
     const data = await res.json();
 
     if (data.status === "success" && data.researchers) {
       setResults(
-        data.researchers.map((r: any) => ({
+        data.researchers.map((r: ApiResearcher) => ({
           name: r.researcher_name,
           affiliation: r.researcher_affiliation_current,
           department: r.researcher_department_current,
